@@ -3,9 +3,9 @@ const { Pool } = pkg;
 
 const pool = new Pool({
   user: "postgres",
-  password: "augini",
-  database: "todo_database",
   host: "localhost",
+  password: "augini",
+  database: "pernstack",
   port: 5432,
 });
 
