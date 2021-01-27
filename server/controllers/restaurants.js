@@ -29,7 +29,10 @@ export const getRestaurant = async (req, res) => {
     );
     res.json({
       status: "success",
-      result: restaurant.rows,
+      results: restaurant.rows.length,
+      data: {
+        restaurant: restaurant.rows[0],
+      },
     });
   } catch (error) {
     console.log({ error });
@@ -46,7 +49,12 @@ export const postRestaurant = async (req, res) => {
       "INSERT INTO restaurants (name, location, price_range) VALUES ($1, $2, $3) RETURNING *",
       [name, location, price_range]
     );
-    res.json(newRestaurant);
+    res.json({
+      status: "success",
+      data: {
+        restaurant: newRestaurant.rows[0],
+      },
+    });
   } catch (error) {
     console.log({ error });
     res.json({ error: error.detail });
