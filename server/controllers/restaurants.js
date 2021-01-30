@@ -27,11 +27,18 @@ export const getRestaurant = async (req, res) => {
       "SELECT * FROM restaurants WHERE id = $1",
       [id]
     );
+
+    const reviews = await pool.query(
+      "SELECT * FROM reviews WHERE restaurant_id = $1",
+      [id]
+    );
+
     res.json({
       status: "success",
       results: restaurant.rows.length,
       data: {
         restaurant: restaurant.rows[0],
+        reviews: reviews.rows,
       },
     });
   } catch (error) {
@@ -100,5 +107,25 @@ export const deleteRestaurant = async (req, res) => {
   } catch (error) {
     console.log({ error });
     res.json({ error: error.detail });
+  }
+};
+
+export const postReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, review, rating } = req.body;
+    const newReview = await pool.query(
+      "INSERT INTO reviews (restaurant_id, name, review, rating) values ($1, $2, $3, $4) returning *;",
+      [id, name, review, rating]
+    );
+    console.log(newReview);
+    res.status(201).json({
+      status: "success",
+      data: {
+        review: newReview.rows[0],
+      },
+    });
+  } catch (err) {
+    console.log(err);
   }
 };
