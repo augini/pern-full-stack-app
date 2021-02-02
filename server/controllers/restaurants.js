@@ -4,13 +4,19 @@ import pool from "../db.js";
 export const getRestaurants = async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   try {
-    const allRestaurants = await pool.query(
-      "SELECT * FROM restaurants ORDER BY id"
+    // const allRestaurants = await pool.query(
+    //   "SELECT * FROM restaurants ORDER BY id"
+    // );
+
+    const restaurantRatingsData = await pool.query(
+      "select * from restaurants left join (select restaurant_id, COUNT(*), TRUNC(AVG(rating),1) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id;"
     );
-    res.json({
+
+    res.status(200).json({
       status: "success",
-      results: allRestaurants.rows.length,
-      data: { restaurants: allRestaurants.rows },
+      // results: allRestaurants.rows.length,
+      results: restaurantRatingsData.rows.length,
+      data: { restaurants: restaurantRatingsData.rows },
     });
   } catch (error) {
     console.log({ error });
@@ -24,7 +30,7 @@ export const getRestaurant = async (req, res) => {
   try {
     const { id } = req.params;
     const restaurant = await pool.query(
-      "SELECT * FROM restaurants WHERE id = $1",
+      "select * from restaurants left join (select restaurant_id, COUNT(*), TRUNC(AVG(rating),1) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id where id = $1",
       [id]
     );
 
