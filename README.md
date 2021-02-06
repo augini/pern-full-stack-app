@@ -250,6 +250,8 @@ Install and enable NGINX
 ```
 sudo apt install nginx -y
 sudo systemctl enable nginx
+
+systemctl status nginx
 ```
 
 NGINX is a feature-rich webserver that can serve multiple websites/web-apps on one machine. Each website that NGINX is responsible for serving needs to have a seperate server block configured for it.
